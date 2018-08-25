@@ -19,6 +19,8 @@ struct Servers
 
 int main(int argc, char** argv)
 {
+    Logger::instance().add(new ConsoleChannel("debug", Level::Trace));
+    Logger::instance().setWriter(new AsyncLogWriter);
     {
         Servers srvs;
         srvs.tcp.start("0.0.0.0", TcpPort);
