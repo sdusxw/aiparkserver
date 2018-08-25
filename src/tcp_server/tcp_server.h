@@ -46,12 +46,12 @@ public:
         // socket->Error += slot(this, &EchoServer::onClientSocketError);
         // socket->Close += slot(this, &EchoServer::onClientSocketClose);
         sockets.push_back(socket);
-        // LDebug("On accept: ", socket)
+         LDebug("On accept: ", socket)
     }
 
     void onSocketRecv(Socket& socket, const MutableBuffer& buffer, const Address& peerAddress)
     {
-        // LDebug("On recv: ", &socket, ": ", buffer.str())
+         LDebug("On recv: ", &socket, ": ", buffer.str())
 
         // Echo it back
         socket.send(bufferCast<const char*>(buffer), buffer.size());
