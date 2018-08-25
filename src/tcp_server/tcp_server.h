@@ -2,8 +2,8 @@
 #include <scy/net/tcpsocket.h>
 
 
-namespace scy {
-namespace net {
+using namespace scy;
+using namespace scy::net;
 
 
 /// The TCP echo server accepts a template argument
