@@ -53,7 +53,8 @@ public:
     void onSocketRecv(Socket& socket, const MutableBuffer& buffer, const Address& peerAddress)
     {
         cout << "On recv: " << &socket << ": " << buffer.str() << endl;
-
+        cout << "On recv: " << socket->address().host() <<"\t" << socket->address().port() << endl;
+        cout << "On recv: peerAddress" << socket->peerAddress().host() <<"\t" << socket->peerAddress().port() << endl;
         // Echo it back
         socket.send(bufferCast<const char*>(buffer), buffer.size());
 
