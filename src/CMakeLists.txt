@@ -26,3 +26,4 @@ SET(LIBRARY_OUTPUT_PATH ${lib_dir}/lib)
 
 # add subdirectories
 add_subdirectory(test)
+add_subdirectory(tcp_server)
