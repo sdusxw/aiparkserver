@@ -27,9 +27,6 @@ public:
 
     void start(const std::string& host, uint16_t port)
     {
-        auto ssl = dynamic_cast<SSLSocket*>(server.get());
-        if (ssl)
-            ssl->useContext(SSLManager::instance().defaultServerContext());
 
         server->bind(Address(host, port));
         server->listen();

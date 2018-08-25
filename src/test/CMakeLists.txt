@@ -12,5 +12,5 @@ add_executable(test_tcpsvr
 )
 
 
-target_link_libraries(test_tcpsvr scy_base scy_net)
+target_link_libraries(test_tcpsvr scy_base scy_net libuv)
 
