@@ -6,7 +6,7 @@ link_directories(
 	/usr/local/lib
 )
 
-add_library(tcp_server
+add_library(tcp_server SHARED
 	tcp_server.h
 	tcp_server.cpp
 )
