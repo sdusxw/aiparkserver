@@ -19,7 +19,7 @@ struct Servers
 
 int main(int argc, char** argv)
 {
-    Logger::instance().add(new ConsoleChannel("debug", Level::Trace));
+    Logger::instance().add(new ConsoleChannel("debug", Level::Debug));
     Logger::instance().setWriter(new AsyncLogWriter);
     {
         Servers srvs;
