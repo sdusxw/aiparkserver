@@ -13,7 +13,7 @@ const uint16_t TcpPort = 7666;
 
 struct Servers
 {
-    TCPEchoServer tcp;
+    EchoServer tcp;
 };
 
 

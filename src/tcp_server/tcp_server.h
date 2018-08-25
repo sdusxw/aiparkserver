@@ -5,18 +5,18 @@
 using namespace scy;
 using namespace scy::net;
 
+using namespace std;
 
 /// The TCP echo server accepts a template argument
 /// of either a TCPSocket or a SSLSocket.
-template <class SocketT>
 class EchoServer : public SocketAdapter
 {
 public:
-    typename SocketT::Ptr server;
-    typename Socket::Vec sockets;
+    TCPSocket::Ptr server;
+    Socket::Vec sockets;
 
     EchoServer()
-        : server(std::make_shared<SocketT>())
+        : server(std::make_shared<TCPSocket>())
     {
     }
 
@@ -46,12 +46,12 @@ public:
         // socket->Error += slot(this, &EchoServer::onClientSocketError);
         // socket->Close += slot(this, &EchoServer::onClientSocketClose);
         sockets.push_back(socket);
-         LDebug("On accept: ", socket)
+        cout << "On accept: " << socket << endl;
     }
 
     void onSocketRecv(Socket& socket, const MutableBuffer& buffer, const Address& peerAddress)
     {
-         LDebug("On recv: ", &socket, ": ", buffer.str())
+        cout << "On recv: " << &socket << ": " << buffer.str() << endl;
 
         // Echo it back
         socket.send(bufferCast<const char*>(buffer), buffer.size());
@@ -90,9 +90,5 @@ public:
     }
 };
 
-
-// Some generic server types
-typedef EchoServer<TCPSocket> TCPEchoServer;
-typedef EchoServer<SSLSocket> SSLEchoServer;
 
 
