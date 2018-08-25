@@ -84,7 +84,7 @@ public:
                 // deincrement the ref counter and destroy the socket
                 sockets.erase(it);
                 return;
-            }≠
+            }
         }
         assert(0 && "unknown socket");
     }
