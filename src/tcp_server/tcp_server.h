@@ -47,6 +47,7 @@ public:
         // socket->Close += slot(this, &EchoServer::onClientSocketClose);
         sockets.push_back(socket);
         cout << "On accept: " << socket->address().host() <<"\t" << socket->address().port() << endl;
+        cout << "On accept: peerAddress" << socket->peerAddress().host() <<"\t" << socket->peerAddress().port() << endl;
     }
 
     void onSocketRecv(Socket& socket, const MutableBuffer& buffer, const Address& peerAddress)
