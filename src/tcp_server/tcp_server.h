@@ -12,9 +12,7 @@ class TcpServer : public SocketAdapter
 public:
     TCPSocket::Ptr server;
     TCPSocket::Vec sockets;
-    typedef std::map<std::string, TCPSocket::Ptr> Named_Sockets;
-    
-    Named_Sockets named_sockets;
+    std::map<std::string, Socket::Ptr> named_sockets;
 
     TcpServer()
         : server(std::make_shared<TCPSocket>())
@@ -71,7 +69,7 @@ public:
             if (string_cmd == "init_parkid")    //硬件配置信息
             {
                 std::string park_id = json_object["park_id"].asString();
-                named_sockets[park_id] = socket;
+                named_sockets[park_id] = socket.Ptr;
                 cout << "Park ID:\t" << park_id << endl;
             }
         }
