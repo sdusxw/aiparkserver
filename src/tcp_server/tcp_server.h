@@ -69,7 +69,7 @@ public:
             if (string_cmd == "init_parkid")    //硬件配置信息
             {
                 std::string park_id = json_object["park_id"].asString();
-                named_sockets[park_id] = socket.Ptr;
+                named_sockets[park_id] = std::make_shared<Socket>(socket);
                 cout << "Park ID:\t" << park_id << endl;
             }
         }
