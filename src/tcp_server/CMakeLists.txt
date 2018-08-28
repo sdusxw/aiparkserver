@@ -15,6 +15,6 @@ add_executable(test_tcp
     test_tcp.cpp
 )
 
-target_link_libraries(tcp_server scy_base scy_net libuv)
+target_link_libraries(tcp_server scy_base scy_net libuv jsoncpp)
 
 target_link_libraries(test_tcp tcp_server)

@@ -1,6 +1,6 @@
 #include <scy/net/sslsocket.h>
 #include <scy/net/tcpsocket.h>
-
+#include <jsoncpp/json/json.h>
 
 using namespace scy;
 using namespace scy::net;
@@ -12,7 +12,7 @@ class TcpServer : public SocketAdapter
 public:
     TCPSocket::Ptr server;
     TCPSocket::Vec sockets;
-    //typedef std::map<std::string, Socket::Ptr> named_sockets;
+    typedef std::map<std::string, TCPSocket::Ptr> named_sockets;
 
     TcpServer()
         : server(std::make_shared<TCPSocket>())
@@ -53,8 +53,24 @@ public:
         cout << "On recv: " << &socket << ": " << buffer.str() << endl;
         cout << "On recv: " << socket.address().host() <<"\t" << socket.address().port() << endl;
         cout << "On recv: peerAddress " << socket.peerAddress().host() <<"\t" << socket.peerAddress().port() << endl;
-        // Echo it back
-        socket.send(bufferCast<const char*>(buffer), buffer.size());
+        
+        Json::Reader reader;
+        Json::Value json_object;
+        
+        if (!reader.parse(buffer.str(), json_object))
+        {
+            //JSON格式错误导致解析失败
+            cout << "[json]解析失败" << endl;
+            continue;
+        }
+        //根据cmd来进入相应处理分支
+        std::string string_cmd = json_object["cmd"].asString();
+        if (string_cmd == "init_parkid")    //硬件配置信息
+        {
+            std::string park_id = json_object["park_id"].asString();
+            named_sockets[park_id] = socket;
+            cout << "Park ID:\t" << park_id << endl;
+        }
     }
 
     void onSocketError(Socket& socket, const Error& error)
