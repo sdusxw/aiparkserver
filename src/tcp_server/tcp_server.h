@@ -12,7 +12,7 @@ class TcpServer : public SocketAdapter
 public:
     TCPSocket::Ptr server;
     TCPSocket::Vec sockets;
-    //typedef std::map<std::string, TCPSocket::Ptr> named_sockets;
+    //typedef std::map<std::string, Socket::Ptr> named_sockets;
 
     TcpServer()
         : server(std::make_shared<TCPSocket>())
@@ -66,7 +66,7 @@ public:
     {
         LDebug("On close")
 
-        for (typename Socket::Vec::iterator it = sockets.begin();
+        for (typename TCPSocket::Vec::iterator it = sockets.begin();
             it != sockets.end(); ++it) {
             if (it->get() == &socket) {
                 LDebug("Removing: ", &socket)
