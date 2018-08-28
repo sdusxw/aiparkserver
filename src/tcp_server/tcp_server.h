@@ -63,15 +63,17 @@ public:
         {
             //JSON格式错误导致解析失败
             cout << "[json]解析失败" << endl;
-            continue;
         }
-        //根据cmd来进入相应处理分支
-        std::string string_cmd = json_object["cmd"].asString();
-        if (string_cmd == "init_parkid")    //硬件配置信息
+        else
         {
-            std::string park_id = json_object["park_id"].asString();
-            named_sockets[park_id] = socket;
-            cout << "Park ID:\t" << park_id << endl;
+            //根据cmd来进入相应处理分支
+            std::string string_cmd = json_object["cmd"].asString();
+            if (string_cmd == "init_parkid")    //硬件配置信息
+            {
+                std::string park_id = json_object["park_id"].asString();
+                named_sockets[park_id] = socket;
+                cout << "Park ID:\t" << park_id << endl;
+            }
         }
     }
 
