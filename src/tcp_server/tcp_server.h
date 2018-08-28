@@ -12,7 +12,9 @@ class TcpServer : public SocketAdapter
 public:
     TCPSocket::Ptr server;
     TCPSocket::Vec sockets;
-    typedef std::map<std::string, TCPSocket::Ptr> named_sockets;
+    typedef std::map<std::string, TCPSocket::Ptr> Named_Sockets;
+    
+    Named_Sockets named_sockets;
 
     TcpServer()
         : server(std::make_shared<TCPSocket>())
