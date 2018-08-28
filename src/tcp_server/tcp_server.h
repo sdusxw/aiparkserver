@@ -7,20 +7,19 @@ using namespace scy::net;
 
 using namespace std;
 
-/// The TCP echo server accepts a template argument
-/// of either a TCPSocket or a SSLSocket.
-class EchoServer : public SocketAdapter
+class TcpServer : public SocketAdapter
 {
 public:
     TCPSocket::Ptr server;
-    Socket::Vec sockets;
+    TCPSocket::Vec sockets;
+    typedef std::map<std::string, TCPSocket::Ptr> named_sockets;
 
-    EchoServer()
+    TcpServer()
         : server(std::make_shared<TCPSocket>())
     {
     }
 
-    ~EchoServer()
+    TcpServer()
     {
         shutdown();
     }
@@ -30,7 +29,8 @@ public:
 
         server->bind(Address(host, port));
         server->listen();
-        server->AcceptConnection += slot(this, &EchoServer::onAcceptConnection);
+        server->setReusePort();
+        server->AcceptConnection += slot(this, &TcpServer::onAcceptConnection);
     }
 
     void shutdown()
@@ -42,9 +42,7 @@ public:
     void onAcceptConnection(const TCPSocket::Ptr& socket)
     {
         socket->addReceiver(this);
-        // socket->Recv += slot(this, &EchoServer::onClientSocketRecv);
-        // socket->Error += slot(this, &EchoServer::onClientSocketError);
-        // socket->Close += slot(this, &EchoServer::onClientSocketClose);
+        socket->setKeepAlive(true, 30);
         sockets.push_back(socket);
         cout << "On accept: " << socket->address().host() <<"\t" << socket->address().port() << endl;
         cout << "On accept: peerAddress" << socket->peerAddress().host() <<"\t" << socket->peerAddress().port() << endl;
@@ -57,15 +55,6 @@ public:
         cout << "On recv: peerAddress " << socket.peerAddress().host() <<"\t" << socket.peerAddress().port() << endl;
         // Echo it back
         socket.send(bufferCast<const char*>(buffer), buffer.size());
-
-        // Send a HTTP packet
-        // std::ostringstream res;
-        // res << "HTTP/1.1 200 OK\r\n"
-        //     << "Connection: close\r\n"
-        //     << "Content-Length: 0" << "\r\n"
-        //     << "\r\n";
-        // std::string response(res.str());
-        // socket.send(response.c_str(), response.size());
     }
 
     void onSocketError(Socket& socket, const Error& error)

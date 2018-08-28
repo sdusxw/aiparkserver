@@ -11,10 +11,7 @@ using namespace scy;
 const uint16_t TcpPort = 7666;
 
 
-struct Servers
-{
-    EchoServer tcp;
-};
+TcpServer tcp_svr;
 
 
 int main(int argc, char** argv)
@@ -22,13 +19,12 @@ int main(int argc, char** argv)
     Logger::instance().add(new ConsoleChannel("debug", Level::Debug));
     Logger::instance().setWriter(new AsyncLogWriter);
     {
-        Servers srvs;
-        srvs.tcp.start("0.0.0.0", TcpPort);
+        tcp_svr.start("0.0.0.0", TcpPort);
         
-        std::cout << "TCP Server listening on " << srvs.tcp.server->address() << std::endl;
+        std::cout << "TCP Server listening on " << tcp_svr.server->address() << std::endl;
         
         waitForShutdown([&](void*) {
-            srvs.tcp.shutdown();
+            tcp_svr.shutdown();
         });
     }
     return 0;
