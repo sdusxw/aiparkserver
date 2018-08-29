@@ -2,6 +2,8 @@
 #include <scy/net/tcpsocket.h>
 #include <jsoncpp/json/json.h>
 
+#include <unistd.h>
+
 using namespace scy;
 using namespace scy::net;
 
@@ -30,6 +32,7 @@ public:
         server->bind(Address(host, port));
         server->listen();
         server->setReusePort();
+        server->setNoDelay(true);
         server->AcceptConnection += slot(this, &TcpServer::onAcceptConnection);
     }
 
@@ -73,6 +76,9 @@ public:
                 cout << "Park ID:\t" << park_id << endl;
                 std::string msg = "fuck u, i got.\n";
                 socket.send(msg.c_str(), msg.length());
+                sleep(3);
+                std::string msg2 = "fuck u twice, bitch.\n";
+                socket.send(msg2.c_str(), msg2.length());
             }
         }
     }
