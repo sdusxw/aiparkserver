@@ -74,11 +74,6 @@ public:
                 std::string park_id = json_object["park_id"].asString();
                 named_sockets[park_id] = &socket;
                 cout << "Park ID:\t" << park_id << endl;
-                std::string msg = "fuck u, i got.\n";
-                socket.send(msg.c_str(), msg.length());
-                sleep(3);
-                std::string msg2 = "fuck u twice, bitch.\n";
-                socket.send(msg2.c_str(), msg2.length());
             }
         }
     }
