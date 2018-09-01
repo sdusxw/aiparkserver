@@ -74,7 +74,12 @@ public:
             {
                 std::string park_id = json_object["park_id"].asString();
                 named_sockets[park_id] = &socket;
-                cout << "Park ID:\t" << park_id << endl;
+                cout << "Init Park ID:\t" << park_id << endl;
+            }
+            else if(string_cmd == "heartbeat")  //心跳消息
+            {
+                std::string park_id = json_object["park_id"].asString();
+                cout << "Heartbeat Park ID:\t" << park_id << endl;
             }
         }
     }
@@ -86,8 +91,6 @@ public:
 
     void onSocketClose(Socket& socket)
     {
-        LDebug("On close")
-
         for (typename TCPSocket::Vec::iterator it = sockets.begin();
             it != sockets.end(); ++it) {
             if (it->get() == &socket) {
@@ -99,7 +102,6 @@ public:
                 return;
             }
         }
-        assert(0 && "unknown socket");
     }
 };
 
