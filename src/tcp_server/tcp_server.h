@@ -46,6 +46,7 @@ public:
     {
         socket->addReceiver(this);
         socket->setKeepAlive(true, 30);
+        socket->setNoDelay(true);
         sockets.push_back(socket);
         cout << "On accept: " << socket->address().host() <<"\t" << socket->address().port() << endl;
         cout << "On accept: peerAddress" << socket->peerAddress().host() <<"\t" << socket->peerAddress().port() << endl;
@@ -80,7 +81,7 @@ public:
 
     void onSocketError(Socket& socket, const Error& error)
     {
-        LDebug("On error: ", error.err, ": ", error.message)
+        cout << "On error: " << error.message << std::endl;
     }
 
     void onSocketClose(Socket& socket)
@@ -90,7 +91,7 @@ public:
         for (typename TCPSocket::Vec::iterator it = sockets.begin();
             it != sockets.end(); ++it) {
             if (it->get() == &socket) {
-                LDebug("Removing: ", &socket)
+                std::cout << "some client closed" << std::endl;
 
                 // All we need to do is erase the socket in order to
                 // deincrement the ref counter and destroy the socket

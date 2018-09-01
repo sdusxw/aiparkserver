@@ -14,7 +14,6 @@ int main(int argc, char** argv)
     srv.start();
     
     srv.Connection += [](http::ServerConnection::Ptr conn) {
-        std::cout << "fk 1" << std::endl;
         conn->Payload += [](http::ServerConnection& conn, const MutableBuffer& buffer) {
             std::cout << buffer.str() << std::endl;
             conn.send(bufferCast<const char*>(buffer), buffer.size());
