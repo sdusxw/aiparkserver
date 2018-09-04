@@ -13,5 +13,5 @@ add_executable(aipayserver
     utils.cpp
 )
 
-target_link_libraries(aipayserver pthread tcp_server jsoncpp)
+target_link_libraries(aipayserver pthread tcp_server jsoncpp scy_http)
 
