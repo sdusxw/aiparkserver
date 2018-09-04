@@ -1,15 +1,18 @@
+#ifndef _TCP_SERVER
+#define _TCP_SERVER
+
 #include <scy/net/sslsocket.h>
 #include <scy/net/tcpsocket.h>
 #include <jsoncpp/json/json.h>
 
 #include <unistd.h>
 
-#include "utils.h"
-
 using namespace scy;
 using namespace scy::net;
 
 using namespace std;
+
+long get_utc();
 
 class TcpServer : public SocketAdapter
 {
@@ -82,7 +85,7 @@ public:
             {
                 std::string park_id = json_object["park_id"].asString();
                 cout << "Heartbeat Park ID:\t" << park_id << endl;
-                long unix_ts = get_unix_ts();
+                long unix_ts = get_utc();
                 Json::Value json_hb_msg;
                 json_hb_msg["cmd"] = Json::Value("heartbeat");
                 json_hb_msg["timestamp"] = Json::Value((int)unix_ts);
@@ -113,5 +116,5 @@ public:
     }
 };
 
-
+#endif
 
