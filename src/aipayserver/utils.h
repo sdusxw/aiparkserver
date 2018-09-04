@@ -28,7 +28,7 @@ void msg_print(std::string msg);
 //日志输出初始化，生成日志文件，追加模式
 void log_init();
 //日志输出：输出格式为时间+日志消息
-void log_output(std::string msg);
+void log_output(std::string msg, bool std_print = true);
 //获取时间，精确到微秒
 std::string get_time_us();
 //获取时间，精确到毫秒

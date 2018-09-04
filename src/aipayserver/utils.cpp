@@ -103,8 +103,10 @@ void log_init()
         msg_print("日志系统初始化失败，程序将在无日志状态下运行。");
 }
 
-void log_output(std::string msg)
+void log_output(std::string msg, bool std_print)
 {
+    if (std_print)
+        msg_print(msg);
     if (g_log_file.good())
     {
         std::string log_msg = "[" + get_time_us() + "]" + msg;

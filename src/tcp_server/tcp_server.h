@@ -4,6 +4,8 @@
 
 #include <unistd.h>
 
+#include "utils.h"
+
 using namespace scy;
 using namespace scy::net;
 
@@ -80,6 +82,12 @@ public:
             {
                 std::string park_id = json_object["park_id"].asString();
                 cout << "Heartbeat Park ID:\t" << park_id << endl;
+                long unix_ts = get_unix_ts();
+                Json::Value json_hb_msg;
+                json_hb_msg["cmd"] = Json::Value("heartbeat");
+                json_hb_msg["timestamp"] = Json::Value(unix_ts);
+                std::string msg_hb = json_hb_msg.toStyledString();
+                socket.send((const char *)msg_hb.c_str(), msg_hb.length());
             }
         }
     }
