@@ -85,7 +85,7 @@ public:
                 long unix_ts = get_unix_ts();
                 Json::Value json_hb_msg;
                 json_hb_msg["cmd"] = Json::Value("heartbeat");
-                json_hb_msg["timestamp"] = Json::Value(unix_ts);
+                json_hb_msg["timestamp"] = Json::Value((int)unix_ts);
                 std::string msg_hb = json_hb_msg.toStyledString();
                 socket.send((const char *)msg_hb.c_str(), msg_hb.length());
             }
