@@ -36,7 +36,7 @@ int main()
             ms.psocket = &conn;
             pthread_t tid_msg_handle;
             pthread_create(&tid_msg_handle,NULL,http_msg_handle, &ms);
-            pthread_detach(tid_msg_handle);
+            pthread_join(tid_msg_handle, NULL);
             //conn.send(bufferCast<const char*>(buffer), buffer.size());
             //conn.close();
         };
@@ -52,5 +52,6 @@ void * http_msg_handle(void *arg)
 {
     p_mesg_sock pms = (p_mesg_sock)arg;
     std::cout << pms->message << std::endl;
+    pms->psocket->close();
     return NULL;
 }
