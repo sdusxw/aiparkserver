@@ -23,8 +23,8 @@
 //结构体声明
 typedef struct
 {
-    MutableBuffer *pmessage;                  //JSON消息
-    http::ServerConnection *psocket;          //socket指针
+    std::string message;                    //JSON消息
+    http::ServerConnection *psocket;        //socket指针
 }mesg_sock, *p_mesg_sock;
 
 //全局变量声明
