@@ -100,7 +100,7 @@ public:
                 std::string openid = json_object["openid"].asString();
                 std::map<std::string, p_sem_msg>::iterator iter = map_sem_msg.find(openid);
                 
-                if( openid.end() != iter )//找到openid对应的sem_msg
+                if( map_sem_msg.end() != iter )//找到openid对应的sem_msg
                 {
                     p_sem_msg the_p_sem_msg = iter->second;
                     the_p_sem_msg->msg = std::string(buffer.str(), buffer.size());
