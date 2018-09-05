@@ -28,6 +28,9 @@ int main()
     //设置http消息接收处理函数
     p_http_srv->Connection += [](http::ServerConnection::Ptr conn) {
         conn->Payload += [](http::ServerConnection& conn, const MutableBuffer& buffer) {
+            std::cout << "JSON: " << buffer.str() << "END" << std::endl;
+            std::cout << "string length: " << buffer.str().length() << std::endl;
+            std::cout << "buffer length: " << buffer.size() << std::endl;
             mesg_sock ms;
             ms.message = std::string(bufferCast<const char*>(buffer), buffer.size());
             ms.psocket = &conn;
