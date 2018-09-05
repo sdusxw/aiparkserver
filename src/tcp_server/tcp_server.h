@@ -6,6 +6,7 @@
 #include <jsoncpp/json/json.h>
 
 #include <unistd.h>
+#include <semaphore.h>
 
 using namespace scy;
 using namespace scy::net;
@@ -14,12 +15,28 @@ using namespace std;
 
 long get_utc();
 
+class TcpConnection : public SocketAdapter
+{
+public:
+    std::string park_id;
+    Socket * p_socket;
+    sem_t sem_event;
+    
+    void onSocketRecv(Socket& socket, const MutableBuffer& buffer, const Address& peerAddress)
+    {
+        cout << "TcpConnection On recv: " << &socket << ": " << buffer.str() << endl;
+        cout << "TcpConnection On recv: " << socket.address().host() <<"\t" << socket.address().port() << endl;
+        cout << "TcpConnection On recv: peerAddress " << socket.peerAddress().host() <<"\t" << socket.peerAddress().port() << endl;
+    }
+};
+
 class TcpServer : public SocketAdapter
 {
 public:
     TCPSocket::Ptr server;
     TCPSocket::Vec sockets;
     std::map<std::string, Socket*> named_sockets;
+    
 
     TcpServer()
         : server(std::make_shared<TCPSocket>())
@@ -80,6 +97,11 @@ public:
                 std::string park_id = json_object["park_id"].asString();
                 named_sockets[park_id] = &socket;
                 cout << "Init Park ID:\t" << park_id << endl;
+                TcpConnection *p_tcp_conn = new TcpConnection();
+                p_tcp_conn->park_id = park_id;
+                p_tcp_conn->p_socket = & socket;
+                socket.addReceiver(p_tcp_conn);
+                socket.removeReceiver(p_tcp_conn);
             }
             else if(string_cmd == "heartbeat")  //心跳消息
             {

@@ -37,8 +37,6 @@ int main()
             pthread_t tid_msg_handle;
             pthread_create(&tid_msg_handle,NULL,http_msg_handle, &ms);
             pthread_join(tid_msg_handle, NULL);
-            //conn.send(bufferCast<const char*>(buffer), buffer.size());
-            //conn.close();
         };
     };
     sprintf(log_chars, "Http Server 启动成功，监听端口：%d", PAY_HTTP_PORT);
