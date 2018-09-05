@@ -15,17 +15,58 @@ using namespace std;
 
 long get_utc();
 
+typedef struct
+{
+    sem_t *sem;
+    std::string msg;
+}sem_msg, *p_sem_msg;
+
 class TcpConnection : public SocketAdapter
 {
 public:
     std::string park_id;
     Socket * p_socket;
+    std::map<std::string, p_sem_msg> map_sem_msg;
     
     //转发消息，并接收返回
     bool trans_recv(std::string msg_in, std::string & msg_out)
     {
+        bool b_ret = false;
         p_socket->send(msg_in.c_str(), msg_in.length());
-        return true;
+        Json::Reader reader;
+        Json::Value json_object;
+        
+        if (!reader.parse(msg_in, json_object))
+        {
+            //JSON格式错误导致解析失败
+            cout << "[json]解析失败" << endl;
+        }
+        else
+        {
+            //根据openid来作为信号量的标识
+            std::string openid = json_object["openid"].asString();
+            struct timespec ts;
+            if ( clock_gettime( CLOCK_REALTIME,&ts ) < 0 )
+                return false;
+            sem_t sem;
+            sem_init(&sem, 0, 0);
+            ts.tv_sec  += 5;    //超时时间为5秒
+            sem_msg the_sem_msg;
+            the_sem_msg.sem = &sem;
+            map_sem_msg[openid] = &the_sem_msg;
+            int ret = sem_timedwait( &sem,&ts );
+            if (ret == -1)
+            {
+                b_ret = false;
+            }
+            else
+            {
+                b_ret = true;
+                msg_out = std::string(the_sem_msg.msg.c_str(), the_sem_msg.msg.length());
+            }
+            sem_destroy(&sem);
+        }
+        return b_ret;
     }
     
     void onSocketRecv(Socket& socket, const MutableBuffer& buffer, const Address& peerAddress)
@@ -48,13 +89,26 @@ public:
             if(string_cmd == "heartbeat")  //心跳消息
             {
                 std::string park_id = json_object["park_id"].asString();
-                cout << "Heartbeat Park ID:\t" << park_id << endl;
                 long unix_ts = get_utc();
                 Json::Value json_hb_msg;
                 json_hb_msg["cmd"] = Json::Value("heartbeat");
                 json_hb_msg["timestamp"] = Json::Value((int)unix_ts);
                 std::string msg_hb = json_hb_msg.toStyledString();
                 socket.send((const char *)msg_hb.c_str(), msg_hb.length());
+            }else{  //非心跳消息则转发
+                //根据openid来查找map对应的信号量
+                std::string openid = json_object["openid"].asString();
+                std::map<std::string, p_sem_msg>::iterator iter = map_sem_msg.find(openid);
+                
+                if( openid.end() != iter )//找到openid对应的sem_msg
+                {
+                    p_sem_msg the_p_sem_msg = iter->second;
+                    the_p_sem_msg->msg = std::string(buffer.str(), buffer.size());
+                    sem_post(the_p_sem_msg->sem);
+                    cout << "发送消息给" << openid << "对应的sem_msg" << endl;
+                }else{
+                    cout << "未找到" << openid << "对应的sem_msg" << endl;
+                }
             }
         }
     }
