@@ -20,11 +20,19 @@
 #define PAY_TCP_PORT    (7666)
 #define PAY_HTTP_PORT   (7667)
 
+//结构体声明
+typedef struct _message_socket
+{
+    std::string message;                    //JSON消息
+    http::ServerConnection::Ptr psocket;    //socket指针
+}mesg_sock, *p_mesg_sock;
+
 //全局变量声明
 TcpServer pay_tcp_svr;          //TCP服务器，接收AI_PAY_CLIENT的TCP连接，转发WEB的HTTP请求的JSON消息到对应的停车场
 scy::http::Server *p_http_srv;  //HTTP服务器，接收用户请求并处理转发
 
-
+//HTTP 消息处理线程
+void * http_msg_handle(void *arg);
 
 
 #endif  //AI_PAY_SERVER
