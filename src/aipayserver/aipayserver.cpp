@@ -27,7 +27,7 @@ int main()
     p_http_srv->start();
     //设置http消息接收处理函数
     p_http_srv->Connection += [](http::ServerConnection::Ptr conn) {
-        conn->Payload += [](http::ServerConnection& conn, const MutableBuffer& buffer) {s
+        conn->Payload += [](http::ServerConnection& conn, const MutableBuffer& buffer) {
             mesg_sock ms;
             ms.message = std::string(bufferCast<const char*>(buffer), buffer.size());
             ms.psocket = &conn;
