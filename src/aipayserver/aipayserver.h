@@ -21,7 +21,7 @@
 #define PAY_HTTP_PORT   (7667)
 
 //结构体声明
-typedef struct _message_socket
+typedef struct
 {
     std::string message;                    //JSON消息
     http::ServerConnection socket;          //socket指针
