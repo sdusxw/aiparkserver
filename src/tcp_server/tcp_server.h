@@ -105,10 +105,10 @@ public:
                 if( map_sem_msg.end() != iter )//找到openid对应的sem_msg
                 {
                     p_sem_msg the_p_sem_msg = iter->second;
-                    the_p_sem_msg->msg = std::string(buffer.str(), buffer.size());
+                    the_p_sem_msg->msg = std::string(buffer.cstr(), buffer.size());
                     sem_post(the_p_sem_msg->sem);
                     cout << "发送消息给" << openid << "对应的sem_msg" << endl;
-                    pthread_join(*(the_p_sem_msg->pth), NULL);
+                    //pthread_join(*(the_p_sem_msg->pth), NULL);
                 }else{
                     cout << "未找到" << openid << "对应的sem_msg" << endl;
                 }
