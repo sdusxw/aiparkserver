@@ -20,7 +20,13 @@ class TcpConnection : public SocketAdapter
 public:
     std::string park_id;
     Socket * p_socket;
-    sem_t sem_event;
+    
+    //转发消息，并接收返回
+    bool trans_recv(std::string msg_in, std::string & msg_out)
+    {
+        p_socket->send(msg_in.c_str(), msg_in.length());
+        return true;
+    }
     
     void onSocketRecv(Socket& socket, const MutableBuffer& buffer, const Address& peerAddress)
     {
@@ -59,7 +65,7 @@ class TcpServer : public SocketAdapter
 public:
     TCPSocket::Ptr server;
     TCPSocket::Vec sockets;
-    std::map<std::string, Socket*> named_sockets;
+    std::map<std::string, TcpConnection*> named_sockets;
     
 
     TcpServer()
@@ -119,15 +125,41 @@ public:
             if (string_cmd == "init_parkid")    //硬件配置信息
             {
                 std::string park_id = json_object["park_id"].asString();
-                named_sockets[park_id] = &socket;
                 cout << "Init Park ID:\t" << park_id << endl;
                 TcpConnection *p_tcp_conn = new TcpConnection();
                 p_tcp_conn->park_id = park_id;
                 p_tcp_conn->p_socket = & socket;
                 socket.addReceiver(p_tcp_conn);
                 socket.removeReceiver(this);
+                named_sockets[park_id] = p_tcp_conn;
             }
         }
+    }
+    //转发消息，并处理
+    bool trans_mesg(std::string msg_in, std::string & msg_out)
+    {
+        Json::Reader reader;
+        Json::Value json_object;
+        
+        if (!reader.parse(msg_in, json_object))
+        {
+            //JSON格式错误导致解析失败
+            cout << "[json]解析失败" << endl;
+        }
+        else
+        {
+            //根据park_id来确定转发目标
+            std::string park_id = json_object["park_id"].asString();
+            std::map<std::string, TcpConnection*>::iterator iter = named_sockets.find(park_id);
+            
+            if( named_sockets.end() != iter )//找到park_id对应的tcp连接
+            {
+                TcpConnection *p_tcp_conn = iter->second;
+                return p_tcp_conn->trans_recv(msg_in, msg_out);
+            }
+            cout << "未找到" << park_id << "对应的tcp连接" << endl;
+        }
+        return false;
     }
 
     void onSocketError(Socket& socket, const Error& error)
