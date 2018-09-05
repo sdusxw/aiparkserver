@@ -27,6 +27,30 @@ public:
         cout << "TcpConnection On recv: " << &socket << ": " << buffer.str() << endl;
         cout << "TcpConnection On recv: " << socket.address().host() <<"\t" << socket.address().port() << endl;
         cout << "TcpConnection On recv: peerAddress " << socket.peerAddress().host() <<"\t" << socket.peerAddress().port() << endl;
+        Json::Reader reader;
+        Json::Value json_object;
+        
+        if (!reader.parse(buffer.str(), json_object))
+        {
+            //JSON格式错误导致解析失败
+            cout << "[json]解析失败" << endl;
+        }
+        else
+        {
+            //根据cmd来进入相应处理分支
+            std::string string_cmd = json_object["cmd"].asString();
+            if(string_cmd == "heartbeat")  //心跳消息
+            {
+                std::string park_id = json_object["park_id"].asString();
+                cout << "Heartbeat Park ID:\t" << park_id << endl;
+                long unix_ts = get_utc();
+                Json::Value json_hb_msg;
+                json_hb_msg["cmd"] = Json::Value("heartbeat");
+                json_hb_msg["timestamp"] = Json::Value((int)unix_ts);
+                std::string msg_hb = json_hb_msg.toStyledString();
+                socket.send((const char *)msg_hb.c_str(), msg_hb.length());
+            }
+        }
     }
 };
 
@@ -102,17 +126,6 @@ public:
                 p_tcp_conn->p_socket = & socket;
                 socket.addReceiver(p_tcp_conn);
                 socket.removeReceiver(this);
-            }
-            else if(string_cmd == "heartbeat")  //心跳消息
-            {
-                std::string park_id = json_object["park_id"].asString();
-                cout << "Heartbeat Park ID:\t" << park_id << endl;
-                long unix_ts = get_utc();
-                Json::Value json_hb_msg;
-                json_hb_msg["cmd"] = Json::Value("heartbeat");
-                json_hb_msg["timestamp"] = Json::Value((int)unix_ts);
-                std::string msg_hb = json_hb_msg.toStyledString();
-                socket.send((const char *)msg_hb.c_str(), msg_hb.length());
             }
         }
     }
