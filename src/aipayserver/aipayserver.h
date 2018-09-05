@@ -23,7 +23,7 @@
 //结构体声明
 typedef struct
 {
-    std::string message;                    //JSON消息
+    MutableBuffer *pmessage;                  //JSON消息
     http::ServerConnection *psocket;          //socket指针
 }mesg_sock, *p_mesg_sock;
 
