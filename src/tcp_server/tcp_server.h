@@ -101,7 +101,7 @@ public:
                 p_tcp_conn->park_id = park_id;
                 p_tcp_conn->p_socket = & socket;
                 socket.addReceiver(p_tcp_conn);
-                socket.removeReceiver(p_tcp_conn);
+                socket.removeReceiver(this);
             }
             else if(string_cmd == "heartbeat")  //心跳消息
             {
