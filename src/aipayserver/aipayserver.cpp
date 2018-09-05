@@ -30,7 +30,7 @@ int main()
         conn->Payload += [](http::ServerConnection& conn, const MutableBuffer& buffer) {
             mesg_sock ms;
             ms.message = buffer.str();
-            ms.socket = conn;
+            ms.psocket = &conn;
             pthread_t tid_msg_handle;
             pthread_create(&tid_msg_handle,NULL,http_msg_handle, &ms);
             pthread_detach(tid_msg_handle);
