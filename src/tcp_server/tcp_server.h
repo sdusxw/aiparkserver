@@ -4,7 +4,7 @@
 #include <scy/net/sslsocket.h>
 #include <scy/net/tcpsocket.h>
 #include <jsoncpp/json/json.h>
-
+#include <pthread.h>
 #include <unistd.h>
 #include <semaphore.h>
 
@@ -19,6 +19,7 @@ typedef struct
 {
     sem_t *sem;
     std::string msg;
+    pthread_t *pth;
 }sem_msg, *p_sem_msg;
 
 class TcpConnection : public SocketAdapter
@@ -29,7 +30,7 @@ public:
     std::map<std::string, p_sem_msg> map_sem_msg;
     
     //转发消息，并接收返回
-    bool trans_recv(std::string msg_in, std::string & msg_out)
+    bool trans_recv(std::string msg_in, std::string & msg_out, pthread_t * pth)
     {
         bool b_ret = false;
         p_socket->send(msg_in.c_str(), msg_in.length());
@@ -53,6 +54,7 @@ public:
             ts.tv_sec  += 5;    //超时时间为5秒
             sem_msg the_sem_msg;
             the_sem_msg.sem = &sem;
+            the_sem_msg.pth = pth;
             map_sem_msg[openid] = &the_sem_msg;
             int ret = sem_timedwait( &sem,&ts );
             if (ret == -1)
@@ -106,6 +108,7 @@ public:
                     the_p_sem_msg->msg = std::string(buffer.str(), buffer.size());
                     sem_post(the_p_sem_msg->sem);
                     cout << "发送消息给" << openid << "对应的sem_msg" << endl;
+                    pthread_join(*(the_p_sem_msg->pth), NULL);
                 }else{
                     cout << "未找到" << openid << "对应的sem_msg" << endl;
                 }
@@ -190,7 +193,7 @@ public:
         }
     }
     //转发消息，并处理
-    bool trans_mesg(std::string msg_in, std::string & msg_out)
+    bool trans_mesg(std::string msg_in, std::string & msg_out, pthread_t * pth)
     {
         Json::Reader reader;
         Json::Value json_object;
@@ -209,7 +212,7 @@ public:
             if( named_sockets.end() != iter )//找到park_id对应的tcp连接
             {
                 TcpConnection *p_tcp_conn = iter->second;
-                return p_tcp_conn->trans_recv(msg_in, msg_out);
+                return p_tcp_conn->trans_recv(msg_in, msg_out, pth);
             }
             cout << "未找到" << park_id << "对应的tcp连接" << endl;
         }

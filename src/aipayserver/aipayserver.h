@@ -25,6 +25,7 @@ typedef struct
 {
     std::string message;                    //JSON消息
     http::ServerConnection *psocket;        //socket指针
+    pthread_t *p_thread_id;                 //线程指针
 }mesg_sock, *p_mesg_sock;
 
 //全局变量声明

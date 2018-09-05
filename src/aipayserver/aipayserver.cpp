@@ -32,6 +32,7 @@ int main()
             ms.message = std::string(bufferCast<const char*>(buffer), buffer.size());
             ms.psocket = &conn;
             pthread_t tid_msg_handle;
+            ms.p_thread_id = &tid_msg_handle;
             pthread_create(&tid_msg_handle,NULL,http_msg_handle, &ms);
             pthread_join(tid_msg_handle, NULL);
         };
@@ -48,7 +49,7 @@ void * http_msg_handle(void *arg)
     p_mesg_sock pms = (p_mesg_sock)arg;
     std::cout << pms->message << std::endl;
     std::string recv_msg;
-    if(pay_tcp_svr.trans_mesg(pms->message, recv_msg))
+    if(pay_tcp_svr.trans_mesg(pms->message, recv_msg, pms->p_thread_id))
     {
         pms->psocket->send(recv_msg.c_str(), recv_msg.length());
         std::string log_str = "回复HTTP消息: ";
