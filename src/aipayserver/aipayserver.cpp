@@ -50,6 +50,8 @@ void * http_msg_handle(void *arg)
 {
     p_mesg_sock pms = (p_mesg_sock)arg;
     std::cout << pms->message << std::endl;
+    std::string recv_msg;
+    pay_tcp_svr.trans_mesg(pms->message, recv_msg);
     pms->psocket->close();
     return NULL;
 }
