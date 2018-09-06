@@ -52,12 +52,10 @@ public:
             the_sem_msg.done = false;
             the_sem_msg.pth = pth;
             map_sem_msg[openid] = &the_sem_msg;
-            std::cout << "开始等待返回消息" << std::endl;
             while(!the_sem_msg.done)
             {
                 
             }
-            std::cout << "等待结束, 处理返回的消息" << std::endl;
             /*if (ret == -1)
             {
                 b_ret = false;
@@ -73,9 +71,6 @@ public:
     
     void onSocketRecv(Socket& socket, const MutableBuffer& buffer, const Address& peerAddress)
     {
-        cout << "TcpConnection On recv: " << &socket << ": " << buffer.str() << endl;
-        cout << "TcpConnection On recv: " << socket.address().host() <<"\t" << socket.address().port() << endl;
-        cout << "TcpConnection On recv: peerAddress " << socket.peerAddress().host() <<"\t" << socket.peerAddress().port() << endl;
         Json::Reader reader;
         Json::Value json_object;
         
@@ -104,18 +99,10 @@ public:
                 
                 if( map_sem_msg.end() != iter )//找到openid对应的sem_msg
                 {
-                    cout << "找到openid对应的sem_msg" << endl;
                     p_sem_msg the_p_sem_msg = iter->second;
-                    cout << "debug1" << endl;
                     memcpy((void*)the_p_sem_msg->msg, buffer.data(), buffer.size());
                     (the_p_sem_msg->msg)[buffer.size()]='\0';
-                    cout << "debug2" << endl;
-                    cout << the_p_sem_msg->msg;
-                    cout << "debug3" << endl;
                     the_p_sem_msg->done = true;
-                    cout << "debug4" << endl;
-                    cout << "发送消息给" << openid << "对应的sem_msg" << endl;
-                    cout << "debug5" << endl;
                 }else{
                     cout << "未找到" << openid << "对应的sem_msg" << endl;
                 }
@@ -169,11 +156,7 @@ public:
     }
 
     void onSocketRecv(Socket& socket, const MutableBuffer& buffer, const Address& peerAddress)
-    {
-        cout << "On recv: " << &socket << ": " << buffer.str() << endl;
-        cout << "On recv: " << socket.address().host() <<"\t" << socket.address().port() << endl;
-        cout << "On recv: peerAddress " << socket.peerAddress().host() <<"\t" << socket.peerAddress().port() << endl;
-        
+    {    
         Json::Reader reader;
         Json::Value json_object;
         

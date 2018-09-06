@@ -35,7 +35,6 @@ int main()
             pthread_t tid_msg_handle;
             ms.p_thread_id = &tid_msg_handle;
             pthread_create(&tid_msg_handle,NULL,http_msg_handle, &ms);
-            //pthread_join(tid_msg_handle, NULL);
             pthread_detach(tid_msg_handle);
         };
     };
