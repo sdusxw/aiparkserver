@@ -9,6 +9,7 @@
 #include <semaphore.h>
 #include <string.h>
 #include <atomic>
+#include <mutex>
 
 using namespace scy;
 using namespace scy::net;
@@ -30,6 +31,8 @@ public:
     std::string park_id;
     Socket * p_socket;
     std::map<std::string, p_sem_msg> map_sem_msg;
+    std::mutex mutex_map;
+    
     
     //转发消息，并接收返回
     bool trans_recv(std::string msg_in, std::string & msg_out, pthread_t * pth)
@@ -51,7 +54,9 @@ public:
             sem_msg the_sem_msg;
             the_sem_msg.done = false;
             the_sem_msg.pth = pth;
+            mutex_map.lock();
             map_sem_msg[openid] = &the_sem_msg;
+            mutex_map.unlock();
             while(!the_sem_msg.done)
             {
                 
@@ -95,17 +100,20 @@ public:
             }else{  //非心跳消息则转发
                 //根据openid来查找map对应的信号量
                 std::string openid = json_object["openid"].asString();
+                mutex_map.lock();
                 std::map<std::string, p_sem_msg>::iterator iter = map_sem_msg.find(openid);
-                
-                if( map_sem_msg.end() != iter )//找到openid对应的sem_msg
+                if( map_sem_msg.end() == iter)
                 {
-                    p_sem_msg the_p_sem_msg = iter->second;
-                    memcpy((void*)the_p_sem_msg->msg, buffer.data(), buffer.size());
-                    (the_p_sem_msg->msg)[buffer.size()]='\0';
-                    the_p_sem_msg->done = true;
-                }else{
                     cout << "未找到" << openid << "对应的sem_msg" << endl;
+                    mutex_map.unlock();
+                    return;
                 }
+                mutex_map.unlock();
+                //找到openid对应的sem_msg
+                p_sem_msg the_p_sem_msg = iter->second;
+                memcpy((void*)the_p_sem_msg->msg, buffer.data(), buffer.size());
+                (the_p_sem_msg->msg)[buffer.size()]='\0';
+                the_p_sem_msg->done = true;
             }
         }
     }
