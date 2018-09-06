@@ -35,6 +35,7 @@ int main()
             pthread_t tid_msg_handle;
             pthread_create(&tid_msg_handle,NULL,http_msg_handle, &ms);
             pthread_detach(tid_msg_handle);
+            sleep(3000);
         };
     };
     sprintf(log_chars, "Http Server 启动成功，监听端口：%d", PAY_HTTP_PORT);
