@@ -50,14 +50,15 @@ void * http_msg_handle(void *arg)
 {
     p_mesg_sock pms = (p_mesg_sock)arg;
     std::cout << pms->message << std::endl;
+    std::string send_msg = std::string(pms->message, strlen(pms->message));
     std::string recv_msg;
-/*    if(pay_tcp_svr.trans_mesg(pms->message, recv_msg, pms->p_thread_id))
+    if(pay_tcp_svr.trans_mesg(send_msg, recv_msg, pms->p_thread_id))
     {
         pms->psocket->send(recv_msg.c_str(), recv_msg.length());
         std::string log_str = "回复HTTP消息: ";
         log_str += recv_msg;
         log_output(log_str);
-    }*/
+    }
     pms->psocket->close();
     return NULL;
 }
