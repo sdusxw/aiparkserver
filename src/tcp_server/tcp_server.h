@@ -59,6 +59,7 @@ public:
             map_sem_msg[openid] = &the_sem_msg;
             std::cout << "开始等待返回消息" << std::endl;
             int ret = sem_timedwait( &sem,&ts );
+            std::cout << "等待结束, 处理返回的消息" << std::endl;
             if (ret == -1)
             {
                 b_ret = false;
