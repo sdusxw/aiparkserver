@@ -61,6 +61,6 @@ void * http_msg_handle(void *arg)
         log_str += recv_msg;
         log_output(log_str);
     }
-    pms->psocket->close();
+    //pms->psocket->close();
     return NULL;
 }
