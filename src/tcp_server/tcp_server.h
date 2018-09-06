@@ -108,7 +108,7 @@ public:
                     cout << "找到openid对应的sem_msg" << endl;
                     p_sem_msg the_p_sem_msg = iter->second;
                     cout << "debug1" << endl;
-                    the_p_sem_msg->msg = buffer.str();
+                    the_p_sem_msg->msg = "fuck you";
                     cout << "debug2" << endl;
                     cout << the_p_sem_msg->msg;
                     cout << "debug3" << endl;
