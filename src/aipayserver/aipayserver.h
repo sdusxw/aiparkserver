@@ -24,7 +24,6 @@
 typedef struct
 {
     http::ServerConnection *psocket;        //socket指针
-    pthread_t *p_thread_id;                 //线程指针
     char message[1024];                     //JSON消息
 }mesg_sock, *p_mesg_sock;
 

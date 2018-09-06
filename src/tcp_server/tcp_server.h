@@ -21,7 +21,6 @@ long get_utc();
 typedef struct
 {
     atomic_bool done;
-    pthread_t *pth;
     char msg[1024];
 }sem_msg, *p_sem_msg;
 
@@ -35,7 +34,7 @@ public:
     
     
     //转发消息，并接收返回
-    bool trans_recv(std::string msg_in, std::string & msg_out, pthread_t * pth)
+    bool trans_recv(std::string msg_in, std::string & msg_out)
     {
         bool b_ret = false;
         p_socket->send(msg_in.c_str(), msg_in.length());
@@ -53,7 +52,6 @@ public:
             std::string openid = json_object["openid"].asString();
             sem_msg the_sem_msg;
             the_sem_msg.done = false;
-            the_sem_msg.pth = pth;
             mutex_map.lock();
             map_sem_msg[openid] = &the_sem_msg;
             mutex_map.unlock();
@@ -188,7 +186,7 @@ public:
         }
     }
     //转发消息，并处理
-    bool trans_mesg(std::string msg_in, std::string & msg_out, pthread_t * pth)
+    bool trans_mesg(std::string msg_in, std::string & msg_out)
     {
         Json::Reader reader;
         Json::Value json_object;
@@ -207,7 +205,7 @@ public:
             if( named_sockets.end() != iter )//找到park_id对应的tcp连接
             {
                 TcpConnection *p_tcp_conn = iter->second;
-                return p_tcp_conn->trans_recv(msg_in, msg_out, pth);
+                return p_tcp_conn->trans_recv(msg_in, msg_out);
             }
             cout << "未找到" << park_id << "对应的tcp连接" << endl;
         }

@@ -54,13 +54,13 @@ void * http_msg_handle(void *arg)
     log_str += send_msg;
     log_output(log_str);
     std::string recv_msg;
-    if(pay_tcp_svr.trans_mesg(send_msg, recv_msg, pms->p_thread_id))
+    if(pay_tcp_svr.trans_mesg(send_msg, recv_msg))
     {
         pms->psocket->send(recv_msg.c_str(), recv_msg.length());
         log_str = "回复HTTP消息: ";
         log_str += recv_msg;
         log_output(log_str);
     }
-    //pms->psocket->close();
+    pms->psocket->close();
     return NULL;
 }
