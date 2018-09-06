@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <semaphore.h>
 #include <string.h>
+#include <atomic>
 
 using namespace scy;
 using namespace scy::net;
@@ -18,7 +19,7 @@ long get_utc();
 
 typedef struct
 {
-    sem_t *sem;
+    atomic_bool done;
     pthread_t *pth;
     char msg[1024];
 }sem_msg, *p_sem_msg;
@@ -47,29 +48,25 @@ public:
         {
             //根据openid来作为信号量的标识
             std::string openid = json_object["openid"].asString();
-            struct timespec ts;
-            if ( clock_gettime( CLOCK_REALTIME,&ts ) < 0 )
-                return false;
-            sem_t sem;
-            sem_init(&sem, 0, 0);
-            ts.tv_sec  += 5;    //超时时间为5秒
             sem_msg the_sem_msg;
-            the_sem_msg.sem = &sem;
+            the_sem_msg.done = false;
             the_sem_msg.pth = pth;
             map_sem_msg[openid] = &the_sem_msg;
             std::cout << "开始等待返回消息" << std::endl;
-            int ret = sem_timedwait( &sem,&ts );
+            while(!the_sem_msg.done)
+            {
+                
+            }
             std::cout << "等待结束, 处理返回的消息" << std::endl;
-            if (ret == -1)
+            /*if (ret == -1)
             {
                 b_ret = false;
             }
-            else
+            else*/
             {
                 b_ret = true;
                 msg_out = std::string((const char *)(the_sem_msg.msg), strlen((const char *)(the_sem_msg.msg)));
             }
-            sem_destroy(&sem);
         }
         return b_ret;
     }
@@ -115,7 +112,7 @@ public:
                     cout << "debug2" << endl;
                     cout << the_p_sem_msg->msg;
                     cout << "debug3" << endl;
-                    sem_post(the_p_sem_msg->sem);
+                    the_p_sem_msg->done = true;
                     cout << "debug4" << endl;
                     cout << "发送消息给" << openid << "对应的sem_msg" << endl;
                     pthread_join(*(the_p_sem_msg->pth), NULL);
