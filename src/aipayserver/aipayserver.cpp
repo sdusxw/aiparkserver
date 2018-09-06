@@ -28,12 +28,12 @@ int main()
     //设置http消息接收处理函数
     p_http_srv->Connection += [](http::ServerConnection::Ptr conn) {
         conn->Payload += [](http::ServerConnection& conn, const MutableBuffer& buffer) {
-            mesg_sock ms;
-            memcpy(ms.message, buffer.data(), buffer.size());
-            ms.message[buffer.size()] = '\0';
-            ms.psocket = &conn;
+            p_mesg_sock pms = (p_mesg_sock)malloc(sizeof(mesg_sock));
+            memcpy(pms->message, buffer.data(), buffer.size());
+            pms->message[buffer.size()] = '\0';
+            pms->psocket = &conn;
             pthread_t tid_msg_handle;
-            pthread_create(&tid_msg_handle,NULL,http_msg_handle, &ms);
+            pthread_create(&tid_msg_handle,NULL,http_msg_handle, pms);
             pthread_detach(tid_msg_handle);
         };
     };
