@@ -50,6 +50,9 @@ void * http_msg_handle(void *arg)
     std::string log_str;
     p_mesg_sock pms = (p_mesg_sock)arg;
     std::string send_msg = std::string(pms->message, strlen(pms->message));
+    log_str = "收到HTTP消息: ";
+    log_str += send_msg;
+    log_output(log_str);
     std::string recv_msg;
     if(pay_tcp_svr.trans_mesg(send_msg, recv_msg, pms->p_thread_id))
     {
