@@ -115,7 +115,6 @@ public:
                     the_p_sem_msg->done = true;
                     cout << "debug4" << endl;
                     cout << "发送消息给" << openid << "对应的sem_msg" << endl;
-                    pthread_join(*(the_p_sem_msg->pth), NULL);
                     cout << "debug5" << endl;
                 }else{
                     cout << "未找到" << openid << "对应的sem_msg" << endl;
