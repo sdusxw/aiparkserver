@@ -151,8 +151,6 @@ public:
         socket->setKeepAlive(true, 30);
         socket->setNoDelay(true);
         sockets.push_back(socket);
-        cout << "On accept: " << socket->address().host() <<"\t" << socket->address().port() << endl;
-        cout << "On accept: peerAddress" << socket->peerAddress().host() <<"\t" << socket->peerAddress().port() << endl;
     }
 
     void onSocketRecv(Socket& socket, const MutableBuffer& buffer, const Address& peerAddress)
@@ -172,7 +170,6 @@ public:
             if (string_cmd == "init_parkid")    //硬件配置信息
             {
                 std::string park_id = json_object["park_id"].asString();
-                cout << "Init Park ID:\t" << park_id << endl;
                 TcpConnection *p_tcp_conn = new TcpConnection();
                 p_tcp_conn->park_id = park_id;
                 p_tcp_conn->p_socket = & socket;
