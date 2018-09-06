@@ -56,6 +56,7 @@ public:
             the_sem_msg.sem = &sem;
             the_sem_msg.pth = pth;
             map_sem_msg[openid] = &the_sem_msg;
+            std::cout << "开始等待返回消息" << std::endl;
             int ret = sem_timedwait( &sem,&ts );
             if (ret == -1)
             {
@@ -106,11 +107,16 @@ public:
                 {
                     cout << "找到openid对应的sem_msg" << endl;
                     p_sem_msg the_p_sem_msg = iter->second;
+                    cout << "debug1" << endl;
                     the_p_sem_msg->msg = buffer.str();
+                    cout << "debug2" << endl;
                     cout << the_p_sem_msg->msg;
-                    //sem_post(the_p_sem_msg->sem);
+                    cout << "debug3" << endl;
+                    sem_post(the_p_sem_msg->sem);
+                    cout << "debug4" << endl;
                     cout << "发送消息给" << openid << "对应的sem_msg" << endl;
-                    //pthread_join(*(the_p_sem_msg->pth), NULL);
+                    pthread_join(*(the_p_sem_msg->pth), NULL);
+                    cout << "debug5" << endl;
                 }else{
                     cout << "未找到" << openid << "对应的sem_msg" << endl;
                 }
