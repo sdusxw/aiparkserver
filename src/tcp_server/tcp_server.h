@@ -66,7 +66,7 @@ public:
             else
             {
                 b_ret = true;
-                msg_out = std::string(the_sem_msg.msg.c_str(), the_sem_msg.msg.length());
+                msg_out = std::string((const char *)(the_sem_msg.msg), strlen((const char *)(the_sem_msg.msg)));
             }
             sem_destroy(&sem);
         }
@@ -110,6 +110,7 @@ public:
                     p_sem_msg the_p_sem_msg = iter->second;
                     cout << "debug1" << endl;
                     memcpy((void*)the_p_sem_msg->msg, buffer.data(), buffer.size());
+                    (the_p_sem_msg->msg)[buffer.size()]='\0';
                     cout << "debug2" << endl;
                     cout << the_p_sem_msg->msg;
                     cout << "debug3" << endl;
