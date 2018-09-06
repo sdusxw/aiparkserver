@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <semaphore.h>
+#include <string.h>
 
 using namespace scy;
 using namespace scy::net;
@@ -18,8 +19,8 @@ long get_utc();
 typedef struct
 {
     sem_t *sem;
-    std::string msg;
     pthread_t *pth;
+    char msg[1024];
 }sem_msg, *p_sem_msg;
 
 class TcpConnection : public SocketAdapter
@@ -108,7 +109,7 @@ public:
                     cout << "找到openid对应的sem_msg" << endl;
                     p_sem_msg the_p_sem_msg = iter->second;
                     cout << "debug1" << endl;
-                    the_p_sem_msg->msg = "fuck you";
+                    memcpy((void*)the_p_sem_msg->msg, buffer.data(), buffer.size());
                     cout << "debug2" << endl;
                     cout << the_p_sem_msg->msg;
                     cout << "debug3" << endl;
