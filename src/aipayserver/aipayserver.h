@@ -12,7 +12,7 @@
 #include <iostream>
 #include <scy/application.h>
 #include <scy/http/server.h>
-
+#include <string.h>
 #include "tcp_server.h"
 #include "utils.h"
 
@@ -23,9 +23,9 @@
 //结构体声明
 typedef struct
 {
-    std::string message;                    //JSON消息
     http::ServerConnection *psocket;        //socket指针
     pthread_t *p_thread_id;                 //线程指针
+    char message[1024];                     //JSON消息
 }mesg_sock, *p_mesg_sock;
 
 //全局变量声明
