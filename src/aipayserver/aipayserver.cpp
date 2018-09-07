@@ -55,7 +55,7 @@ void * http_msg_handle(void *arg)
     log_output(log_str);
     char recv_msg[1024];
     int recv_len = 0;
-    if(pay_tcp_svr.trans_mesg(send_msg, (char*)recv_msg), recv_len)
+    if(pay_tcp_svr.trans_mesg(send_msg, (char*)recv_msg, recv_len))
     {
         pms->psocket->send((char*)recv_msg, recv_len);
         log_str = "回复HTTP消息: ";
