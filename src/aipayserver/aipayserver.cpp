@@ -59,6 +59,7 @@ void * http_msg_handle(void *arg)
         log_str = "回复HTTP消息: ";
         log_str += recv_msg;
         log_output(log_str);
+        cout << "fuck2lenth: " << strlen(recv_msg) << endl;
     }
     pms->psocket->close();
     if(pms){free(pms);pms=NULL;}
