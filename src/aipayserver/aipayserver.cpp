@@ -52,14 +52,15 @@ void * http_msg_handle(void *arg)
     log_str = "收到HTTP消息: ";
     log_str += send_msg;
     log_output(log_str);
-    std::string recv_msg;
-    if(pay_tcp_svr.trans_mesg(send_msg, recv_msg))
+    char recv_msg[1024];
+    if(pay_tcp_svr.trans_mesg(send_msg, (char*)recv_msg))
     {
-        pms->psocket->send(recv_msg.c_str(), recv_msg.length());
+        pms->psocket->send((char*)recv_msg, strlen(recv_msg));
         log_str = "回复HTTP消息: ";
         log_str += recv_msg;
         log_output(log_str);
     }
     pms->psocket->close();
+    if(pms){free(pms);pms=NULL;}
     return NULL;
 }

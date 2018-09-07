@@ -34,7 +34,7 @@ public:
     
     
     //转发消息，并接收返回
-    bool trans_recv(std::string msg_in, std::string & msg_out)
+    bool trans_recv(std::string msg_in, char* msg_out)
     {
         bool b_ret = false;
         p_socket->send(msg_in.c_str(), msg_in.length());
@@ -50,12 +50,12 @@ public:
         {
             //根据openid来作为信号量的标识
             std::string openid = json_object["openid"].asString();
-            sem_msg the_sem_msg;
-            the_sem_msg.done = false;
+            p_sem_msg the_p_sem_msg = (p_sem_msg)malloc(sizeof(sem_msg));
+            the_p_sem_msg->done = false;
             mutex_map.lock();
-            map_sem_msg[openid] = &the_sem_msg;
+            map_sem_msg[openid] = the_p_sem_msg;
             mutex_map.unlock();
-            while(!the_sem_msg.done)
+            while(!the_p_sem_msg->done)
             {
                 
             }
@@ -66,8 +66,9 @@ public:
             else*/
             {
                 b_ret = true;
-                msg_out = std::string((const char *)(the_sem_msg.msg), strlen((const char *)(the_sem_msg.msg)));
+                memcpy(msg_out, (const char *)(the_p_sem_msg->msg), strlen((const char *)(the_p_sem_msg->msg)));
             }
+            if(the_p_sem_msg) {free(the_p_sem_msg);the_p_sem_msg = NULL;}
         }
         return b_ret;
     }
@@ -186,7 +187,7 @@ public:
         }
     }
     //转发消息，并处理
-    bool trans_mesg(std::string msg_in, std::string & msg_out)
+    bool trans_mesg(std::string msg_in, char* msg_out)
     {
         Json::Reader reader;
         Json::Value json_object;
