@@ -31,6 +31,7 @@ int main()
             p_mesg_sock pms = (p_mesg_sock)malloc(sizeof(mesg_sock));
             memcpy(pms->message, buffer.data(), buffer.size());
             pms->message[buffer.size()] = '\0';
+            pms->msg_len = buffer.size();
             pms->psocket = &conn;
             pthread_t tid_msg_handle;
             pthread_create(&tid_msg_handle,NULL,http_msg_handle, pms);
@@ -48,18 +49,20 @@ void * http_msg_handle(void *arg)
 {
     std::string log_str;
     p_mesg_sock pms = (p_mesg_sock)arg;
-    std::string send_msg = std::string(pms->message, strlen(pms->message));
+    std::string send_msg = std::string(pms->message, pms->msg_len);
     log_str = "收到HTTP消息: ";
     log_str += send_msg;
     log_output(log_str);
     char recv_msg[1024];
-    if(pay_tcp_svr.trans_mesg(send_msg, (char*)recv_msg))
+    int recv_len = 0;
+    if(pay_tcp_svr.trans_mesg(send_msg, (char*)recv_msg), recv_len)
     {
-        pms->psocket->send((char*)recv_msg, strlen(recv_msg));
+        pms->psocket->send((char*)recv_msg, recv_len);
         log_str = "回复HTTP消息: ";
         log_str += recv_msg;
         log_output(log_str);
         cout << "fuck2lenth: " << strlen(recv_msg) << endl;
+        cout << "fuck3lenth: " << recv_len << endl;
     }
     pms->psocket->close();
     if(pms){free(pms);pms=NULL;}

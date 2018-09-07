@@ -21,6 +21,7 @@ long get_utc();
 typedef struct
 {
     atomic_bool done;
+    int msg_len;
     char msg[1024];
 }sem_msg, *p_sem_msg;
 
@@ -34,7 +35,7 @@ public:
     
     
     //转发消息，并接收返回
-    bool trans_recv(std::string msg_in, char* msg_out)
+    bool trans_recv(std::string msg_in, char* msg_out, int &msg_out_len)
     {
         bool b_ret = false;
         p_socket->send(msg_in.c_str(), msg_in.length());
@@ -67,6 +68,7 @@ public:
             {
                 b_ret = true;
                 memcpy(msg_out, (const char *)(the_p_sem_msg->msg), strlen((const char *)(the_p_sem_msg->msg)));
+                msg_out_len = the_p_sem_msg->msg_len;
                 cout << "fuck lenth: " << strlen((const char *)(the_p_sem_msg->msg)) << endl;
             }
             if(the_p_sem_msg) {free(the_p_sem_msg);the_p_sem_msg = NULL;}
@@ -113,6 +115,7 @@ public:
                 p_sem_msg the_p_sem_msg = iter->second;
                 memcpy((void*)(the_p_sem_msg->msg), buffer.data(), buffer.size());
                 (the_p_sem_msg->msg)[buffer.size()]='\0';
+                the_p_sem_msg->msg_len = buffer.size();
                 cout << "buffer size: " << buffer.size() << endl;
                 cout << buffer.str() << endl;
                 cout << "strlen size: " << strlen(the_p_sem_msg->msg) << endl;
@@ -191,7 +194,7 @@ public:
         }
     }
     //转发消息，并处理
-    bool trans_mesg(std::string msg_in, char* msg_out)
+    bool trans_mesg(std::string msg_in, char* msg_out, int &msg_out_len)
     {
         Json::Reader reader;
         Json::Value json_object;
@@ -210,7 +213,7 @@ public:
             if( named_sockets.end() != iter )//找到park_id对应的tcp连接
             {
                 TcpConnection *p_tcp_conn = iter->second;
-                return p_tcp_conn->trans_recv(msg_in, msg_out);
+                return p_tcp_conn->trans_recv(msg_in, msg_out, msg_out_len);
             }
             cout << "未找到" << park_id << "对应的tcp连接" << endl;
         }
