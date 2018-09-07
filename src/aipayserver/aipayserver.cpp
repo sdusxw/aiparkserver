@@ -57,12 +57,11 @@ void * http_msg_handle(void *arg)
     int recv_len = 0;
     if(pay_tcp_svr.trans_mesg(send_msg, (char*)recv_msg, recv_len))
     {
+        std::string msg_recv = std::string((char*)recv_msg, recv_len);
         pms->psocket->send((char*)recv_msg, recv_len);
         log_str = "回复HTTP消息: ";
-        log_str += recv_msg;
+        log_str += msg_recv;
         log_output(log_str);
-        cout << "fuck2lenth: " << strlen(recv_msg) << endl;
-        cout << "fuck3lenth: " << recv_len << endl;
     }
     pms->psocket->close();
     if(pms){free(pms);pms=NULL;}

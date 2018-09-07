@@ -69,7 +69,6 @@ public:
                 b_ret = true;
                 memcpy(msg_out, (const char *)(the_p_sem_msg->msg), strlen((const char *)(the_p_sem_msg->msg)));
                 msg_out_len = the_p_sem_msg->msg_len;
-                cout << "fuck lenth: " << strlen((const char *)(the_p_sem_msg->msg)) << endl;
             }
             if(the_p_sem_msg) {free(the_p_sem_msg);the_p_sem_msg = NULL;}
         }
@@ -116,9 +115,6 @@ public:
                 memcpy((void*)(the_p_sem_msg->msg), buffer.data(), buffer.size());
                 (the_p_sem_msg->msg)[buffer.size()]='\0';
                 the_p_sem_msg->msg_len = buffer.size();
-                cout << "buffer size: " << buffer.size() << endl;
-                cout << buffer.str() << endl;
-                cout << "strlen size: " << strlen(the_p_sem_msg->msg) << endl;
                 the_p_sem_msg->done = true;
             }
         }
