@@ -25,7 +25,7 @@ typedef struct
     char msg[1024];
 }sem_msg, *p_sem_msg;
 
-class TcpConnection : public
+class TcpConnection : public SocketAdapter
 {
 public:
     std::string park_id;
