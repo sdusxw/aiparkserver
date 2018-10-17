@@ -25,7 +25,7 @@ typedef struct
     char msg[1024];
 }sem_msg, *p_sem_msg;
 
-class TcpConnection : public SocketAdapter
+class TcpConnection : public
 {
 public:
     std::string park_id;
@@ -38,7 +38,11 @@ public:
     bool trans_recv(std::string msg_in, char* msg_out, int &msg_out_len)
     {
         bool b_ret = false;
-        p_socket->send(msg_in.c_str(), msg_in.length());
+        int n_sent = p_socket->send(msg_in.c_str(), msg_in.length());
+        if(n_sent != msg_in.length())
+        {
+            return false;
+        }
         Json::Reader reader;
         Json::Value json_object;
         
@@ -58,7 +62,7 @@ public:
             mutex_map.unlock();
             while(!the_p_sem_msg->done)
             {
-                
+                usleep(1000);
             }
             /*if (ret == -1)
             {
