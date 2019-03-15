@@ -63,6 +63,14 @@ void * http_msg_handle(void *arg)
         log_str += msg_recv;
         log_output(log_str);
     }
+    else
+    {
+        std::string msg_response = "{\"ret\":\"fail\"}";
+        pms->psocket->send((char*)recv_msg, recv_len);
+        log_str = "回复HTTP消息:[error,超时无返回] ";
+        log_str += msg_response;
+        log_output(log_str);
+    }
     pms->psocket->close();
     if(pms){free(pms);pms=NULL;}
     return NULL;

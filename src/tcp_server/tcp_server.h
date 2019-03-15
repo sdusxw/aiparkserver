@@ -55,14 +55,23 @@ public:
         {
             //根据openid来作为信号量的标识
             std::string openid = json_object["openid"].asString();
+		if(openid.length() == 0)
+			return false;
             p_sem_msg the_p_sem_msg = (p_sem_msg)malloc(sizeof(sem_msg));
             the_p_sem_msg->done = false;
             mutex_map.lock();
             map_sem_msg[openid] = the_p_sem_msg;
             mutex_map.unlock();
+		int time_ms = 0;
             while(!the_p_sem_msg->done)
             {
                 usleep(1000);
+		time_ms ++;
+		if(time_ms>5000)
+		{
+			if(the_p_sem_msg) {free(the_p_sem_msg);the_p_sem_msg = NULL;}
+			return false;
+		}
             }
             /*if (ret == -1)
             {
