@@ -14,7 +14,7 @@ int main()
     //日志初始化
     log_init();
     //打印系统启动消息
-    log_str = "AiPayServer系统启动...版本号V3.14_20180901";
+    log_str = "AiPayServer系统启动...版本号V3.141_20190320";
     log_output(log_str);
     //初始化TCP Server
     pay_tcp_svr.start(PAY_SVR_IP, PAY_TCP_PORT);
@@ -62,6 +62,7 @@ void * http_msg_handle(void *arg)
         log_str = "回复HTTP消息: ";
         log_str += msg_recv;
         log_output(log_str);
+        pms->psocket->close();
     }
     else
     {
@@ -71,7 +72,7 @@ void * http_msg_handle(void *arg)
         log_str += msg_response;
         log_output(log_str);
     }
-    pms->psocket->close();
+    //pms->psocket->close();
     if(pms){free(pms);pms=NULL;}
     return NULL;
 }

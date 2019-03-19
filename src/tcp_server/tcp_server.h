@@ -67,7 +67,7 @@ public:
             {
                 usleep(1000);
 		time_ms ++;
-		if(time_ms>5000)
+		if(time_ms>2000)
 		{
 			if(the_p_sem_msg) {free(the_p_sem_msg);the_p_sem_msg = NULL;}
 			return false;
